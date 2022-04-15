@@ -1,6 +1,8 @@
 # stimdata_test
 
-Le cahier des charges est donc le suivant :
+Ecrire en php une « mini-appli » permettant d’authentifier un utilisateur.
+
+**Cahier des charges**   :
 
 - Une base de données utilisateurs avec une seule table contenant au moins login et mot de passe (format des données à votre choix).
 - Un formulaire de connexion pour saisir le login et mot de passe
@@ -10,14 +12,14 @@ Le cahier des charges est donc le suivant :
 - Pas de composants externes (symfony, doctrine)
 - Le résultat ne devrait pas faire plus de 50 lignes de codes.
 
-choix :
+**Choix** :
 
 - table "utilisateurs"( id,login,pswd)
 - abstraction SQL : PDO
 - fichier SQL joint
 - Mots de passe crypté en MD5
 
-login / pswd existant :
+**[login / pswd]** :
 
 - test / 1234
 - demo / demo
