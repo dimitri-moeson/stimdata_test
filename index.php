@@ -1,46 +1,63 @@
 <?php
+    /** @var boolean $logged utilisateur identifié ou non */
+    $logged = false ;
 
-$logged = false ;
+    // Si le formulaire est soumis
 
-if( getenv('REQUEST_METHOD') === "POST" && isset($_POST['send'])) {
+    if( getenv('REQUEST_METHOD') === "POST" && isset($_POST['send'])) {
 
-    $dsn = 'mysql:dbname=stimdata_test;host=127.0.0.1';
-    $user = 'root';
-    $password = '';
+        /** traitement de l'identification */
 
-    $dbh = new PDO($dsn, $user, $password);
+        $dsn = 'mysql:dbname=stimdata_test;host=127.0.0.1';
+        $user = 'dbuser';
+        $password = 'dbpass';
 
-    $sth = $dbh->prepare('SELECT id, pswd FROM utilisateurs WHERE login = :login ;');
-    $sth->execute([ 'login' => $_POST['login'] ]);
-    $red = $sth->fetch(PDO::FETCH_OBJ);
+        // connexion à la base
 
-    if($red !== false ) {
+        $dbh = new PDO($dsn, $user, $password);
 
-        if( $red->pswd === md5($_POST['pswd']) ) {
+        // requete SQL pour retrouver l'utilisateur
 
-            $logged = true ;
+        $sth = $dbh->prepare('SELECT id, pswd FROM utilisateurs WHERE login = :login ;');
+        $sth->execute([ 'login' => $_POST['login'] ]);
+        $red = $sth->fetch(PDO::FETCH_OBJ);
+
+        // verification de l'enregistrement en base et du mot de passe
+
+        if($red !== false ) {
+
+            if( $red->pswd === md5($_POST['pswd']) ) {
+
+                $logged = true ;
+            }
         }
     }
-}
-if(isset($_GET['p']) && $_GET['p'] === "identification") {
 
-    if($logged) {
+    if(isset($_GET['p']) && $_GET['p'] === "identification") {
 
-        echo "<h1>identification OK</h1>";
+        /** page de resultat */
+
+        if($logged) {
+
+            // couple login / mot de passe valide
+            echo "<h1>identification OK</h1>";
+
+        } else {
+
+            // couple login / mot de passe invalide
+            echo "<h1>identification échouée</h1>";
+            echo "<a href='?p=login'>Revenir</a>";
+        }
 
     } else {
 
-        echo "<h1>identification échouée</h1>";
-        echo "<a href='?p=login'>Revenir</a>";
+        /** formulaire de connexion */
+
+        echo "<h1>identification</h1>";
+        echo '<form method="post" action="?p=identification">';
+        echo '<input type="text" name="login" placeholder="login" />';
+        echo '<input type="password" name="pswd" placeholder="password" />';
+        echo '<input type="submit" name="send" value="Envoyer" />';
+        echo '</form>';
     }
-
-} else {
-
-    echo "<h1>identification</h1>";
-    echo '<form method="post" action="?p=identification">';
-    echo '<input type="text" name="login" placeholder="login" />';
-    echo '<input type="password" name="pswd" placeholder="password" />';
-    echo '<input type="submit" name="send" value="Envoyer" />';
-    echo '</form>';
-}
 ?>
