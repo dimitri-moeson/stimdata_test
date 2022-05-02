@@ -1,63 +1,95 @@
 <?php
-    /** @var boolean $logged utilisateur identifié ou non */
-    $logged = false ;
 
-    // Si le formulaire est soumis
+/**
+ * Class stimdata
+ */
+class stimdata {
 
-    if( getenv('REQUEST_METHOD') === "POST" && isset($_POST['send'])) {
+    /**
+     * @return bool
+     */
+    public function login(){
 
-        /** traitement de l'identification */
+        /** @var boolean $logged utilisateur identifié ou non */
+        $logged = false;
 
-        $dsn = 'mysql:dbname=stimdata_test;host=127.0.0.1';
-        $user = 'dbuser';
-        $password = 'dbpass';
+        // Si le formulaire est soumis
 
-        // connexion à la base
+        if (getenv('REQUEST_METHOD') === "POST" && isset($_POST['send'])) {
 
-        $dbh = new PDO($dsn, $user, $password);
+            /** traitement de l'identification */
 
-        // requete SQL pour retrouver l'utilisateur
+            $dsn = 'mysql:dbname=stimdata_test;host=127.0.0.1';
+            $user = 'dbuser';
+            $password = 'dbpass';
 
-        $sth = $dbh->prepare('SELECT id, pswd FROM utilisateurs WHERE login = :login ;');
-        $sth->execute([ 'login' => $_POST['login'] ]);
-        $red = $sth->fetch(PDO::FETCH_OBJ);
+            // connexion à la base
 
-        // verification de l'enregistrement en base et du mot de passe
+            $dbh = new PDO($dsn, $user, $password);
 
-        if($red !== false ) {
+            // requete SQL pour retrouver l'utilisateur
 
-            if( $red->pswd === md5($_POST['pswd']) ) {
+            $sth = $dbh->prepare('SELECT id, pswd FROM utilisateurs WHERE login = :login ;');
+            $sth->execute(['login' => $_POST['login']]);
+            $red = $sth->fetch(PDO::FETCH_OBJ);
 
-                $logged = true ;
+            // verification de l'enregistrement en base et du mot de passe
+
+            if ($red !== false) {
+
+                if ($red->pswd === md5($_POST['pswd'])) {
+
+                    $logged = true;
+                }
             }
         }
+
+        return $logged;
     }
 
-    if(isset($_GET['p']) && $_GET['p'] === "identification") {
+    /**
+     * @param boolean $logged
+     * @return string
+     */
+    public function screen($logged = false ) {
 
-        /** page de resultat */
+        $html = "" ;
 
-        if($logged) {
+        if (isset($_GET['p']) && $_GET['p'] === "identification") {
 
-            // couple login / mot de passe valide
-            echo "<h1>identification OK</h1>";
+            /** page de resultat */
+
+            if ($logged) {
+
+                // couple login / mot de passe valide
+                $html =  "<h1>identification OK</h1>";
+
+            } else {
+
+                // couple login / mot de passe invalide
+                $html = "<h1>identification échouée</h1>";
+                $html .= "<a href='?p=login'>Revenir</a>";
+            }
 
         } else {
 
-            // couple login / mot de passe invalide
-            echo "<h1>identification échouée</h1>";
-            echo "<a href='?p=login'>Revenir</a>";
+            /** formulaire de connexion */
+
+            $html = "<h1>identification</h1>";
+            $html .= '<form method="post" action="?p=identification">';
+            $html .= '<input type="text" name="login" placeholder="login" />';
+            $html .= '<input type="password" name="pswd" placeholder="password" />';
+            $html .= '<input type="submit" name="send" value="Envoyer" />';
+            $html .= '</form>';
         }
 
-    } else {
-
-        /** formulaire de connexion */
-
-        echo "<h1>identification</h1>";
-        echo '<form method="post" action="?p=identification">';
-        echo '<input type="text" name="login" placeholder="login" />';
-        echo '<input type="password" name="pswd" placeholder="password" />';
-        echo '<input type="submit" name="send" value="Envoyer" />';
-        echo '</form>';
+        return $html ;
     }
+}
+
+$controller = new stimdata();
+
+$log = $controller->login();
+
+echo $controller->screen($log);
 ?>
