@@ -1,4 +1,5 @@
 <?php
+include_once 'config.php';
 
 /**
  * Class stimdata
@@ -17,15 +18,10 @@ class stimdata {
 
         if (getenv('REQUEST_METHOD') === "POST" && isset($_POST['send'])) {
 
-            /** traitement de l'identification */
-
-            $dsn = 'mysql:dbname=stimdata_test;host=127.0.0.1';
-            $user = 'dbuser';
-            $password = 'dbpass';
-
             // connexion à la base
 
-            $dbh = new PDO($dsn, $user, $password);
+			$dsn = DB_BASE.':dbname='.DB_NAME.';host='.DB_HOST;
+			$dbh = new PDO($dsn, DB_USER , DB_PASS );
 
             // requete SQL pour retrouver l'utilisateur
 
