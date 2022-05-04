@@ -49,7 +49,7 @@ class stimdata {
 
     /**
      * @param boolean $logged
-     * @return string
+     * @return string $html
      */
     public function screen($logged = false ) {
 
@@ -62,12 +62,12 @@ class stimdata {
             if ($logged) {
 
                 // couple login / mot de passe valide
-                $html =  "<h1>identification OK</h1>";
+                $html .=  "<h1>identification OK</h1>";
 
             } else {
 
                 // couple login / mot de passe invalide
-                $html = "<h1>identification échouée</h1>";
+                $html .= "<h1>identification échouée</h1>";
                 $html .= "<a href='?p=login'>Revenir</a>";
             }
 
@@ -75,7 +75,7 @@ class stimdata {
 
             /** formulaire de connexion */
 
-            $html = "<h1>identification</h1>";
+            $html .= "<h1>identification</h1>";
             $html .= '<form method="post" action="?p=identification">';
             $html .= '<input type="text" name="login" placeholder="login" />';
             $html .= '<input type="password" name="pswd" placeholder="password" />';

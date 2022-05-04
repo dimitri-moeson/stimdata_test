@@ -14,7 +14,7 @@ Ecrire en php une « mini-appli » permettant d’authentifier un utilisateur.
 
 **Choix** :
 
-- script final : index.php (~ 30 lignes )
+- script final : index.php (~ 45 lignes )
 - fichier SQL joint : stimdata_test.sql
 - table "utilisateurs"( id,login,pswd)
 - abstraction SQL : PDO
